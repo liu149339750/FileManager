@@ -16,7 +16,7 @@ import android.widget.ImageView;
 
 public class HasThumbItem extends FileItem implements OnImageLoadListener{
 
-	private static Executor mExecutor;
+//	private static Executor mExecutor;
 	private ImageCache mCache;
 	private static final int WIDTH = 64;
 	private static final int HEIGHT = 64;
@@ -25,8 +25,8 @@ public class HasThumbItem extends FileItem implements OnImageLoadListener{
 
 	public HasThumbItem(Context content, String path) {
 		super(content, path);
-		if(mExecutor == null)
-			mExecutor = Executors.newCachedThreadPool();
+//		if(mExecutor == null)
+//			mExecutor = Executors.newCachedThreadPool();
 		mCache = ImageCache.getInstance(mContext);
 		
 	}
@@ -34,18 +34,18 @@ public class HasThumbItem extends FileItem implements OnImageLoadListener{
 	public void setDrawableIcon(ImageView image){
 		mImageView = image;
 		Drawable drawable = null;
-		mCache.registerOnImageLoadListener(this);
 		try {
 			if(id == -1)
 				id = mCache.getNewID();
-			 drawable = mCache.loadImage(id, Uri.parse(path), mimeTypeCode, WIDTH, HEIGHT);
+			mCache.registerOnImageLoadListener(id,this);
+			drawable = mCache.loadImage(id, Uri.parse("file://"+path), mimeTypeCode, WIDTH, HEIGHT);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 		if(drawable == null){
 			drawable = getdefaultDrawable();
 		}else
-			mCache.unregisterOnImageLoadListener(this);
+			mCache.unregisterOnImageLoadListener(id);
 		mImageView.setImageDrawable(drawable);
 	}
 	
@@ -57,7 +57,7 @@ public class HasThumbItem extends FileItem implements OnImageLoadListener{
 	public void onImageLoaded(int id, Uri imageUri, Drawable image) {
 		if(this.id == id && mImageView != null)
 			mImageView.setImageDrawable(image);
-		mCache.unregisterOnImageLoadListener(this);
+		mCache.unregisterOnImageLoadListener(id);
 	}
 
 }

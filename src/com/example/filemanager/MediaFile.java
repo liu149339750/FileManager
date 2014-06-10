@@ -16,15 +16,7 @@
 
 package com.example.filemanager;
 
-import android.content.ContentValues;
-import android.provider.MediaStore.Audio;
-import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Video;
-import android.mtp.MtpConstants;
-
 import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * MediaScanner helper class.

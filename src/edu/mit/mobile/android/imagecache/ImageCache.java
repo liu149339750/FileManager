@@ -97,11 +97,11 @@ public class ImageCache extends DiskCache<String, Bitmap> {
 	private static final boolean USE_APACHE_NC = true;
 
 	// the below settings are copied from AsyncTask.java
-	private static final int CORE_POOL_SIZE = 5; // thread
-	private static final int MAXIMUM_POOL_SIZE = 128; // thread
+	private static final int CORE_POOL_SIZE = 2; // thread
+	private static final int MAXIMUM_POOL_SIZE = 2; // thread
 	private static final int KEEP_ALIVE_TIME = 1; // second
 
-	private final HashSet<OnImageLoadListener> mImageLoadListeners = new HashSet<ImageCache.OnImageLoadListener>();
+	private final HashMap<Integer,OnImageLoadListener> mImageLoadListeners = new HashMap<Integer,ImageCache.OnImageLoadListener>();
 
 	public static final int DEFAULT_CACHE_SIZE = (24 /* MiB */* 1024 * 1024); // in
 																				// bytes
@@ -361,8 +361,8 @@ public class ImageCache extends DiskCache<String, Bitmap> {
 	 * @param onImageLoadListener
 	 */
 	public void registerOnImageLoadListener(
-			OnImageLoadListener onImageLoadListener) {
-		mImageLoadListeners.add(onImageLoadListener);
+			int id, OnImageLoadListener onImageLoadListener) {
+		mImageLoadListeners.put(id,onImageLoadListener);
 	}
 
 	/**
@@ -378,8 +378,8 @@ public class ImageCache extends DiskCache<String, Bitmap> {
 	 * @param onImageLoadListener
 	 */
 	public void unregisterOnImageLoadListener(
-			OnImageLoadListener onImageLoadListener) {
-		mImageLoadListeners.remove(onImageLoadListener);
+			int id) {
+		mImageLoadListeners.remove(id);
 	}
 
 	private class LoadResult {
@@ -464,7 +464,6 @@ public class ImageCache extends DiskCache<String, Bitmap> {
 			if (d != null) {
 				return d;
 			}
-
 			if (MediaFile.isVideoFileType(type)) {
 				Bitmap bmp = Util.createVideoThumbnail(uri.getPath());
 				if (bmp == null)
@@ -885,9 +884,10 @@ public class ImageCache extends DiskCache<String, Bitmap> {
 	}
 
 	private void notifyListeners(LoadResult result) {
-		for (final OnImageLoadListener listener : mImageLoadListeners) {
-			listener.onImageLoaded(result.id, result.image, result.drawable);
-		}
+		int id = result.id;
+		OnImageLoadListener listener = mImageLoadListeners.get(id);
+		if(listener != null)
+			listener.onImageLoaded(id, result.image, result.drawable);
 	}
 
 	/**

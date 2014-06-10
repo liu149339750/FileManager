@@ -8,7 +8,7 @@ import android.support.v4.app.FragmentActivity;
 import android.view.Menu;
 
 public class MainActivity extends FragmentActivity {
-
+	FileListFragment mFileListFragment;
 	@Override
 	protected void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
@@ -27,15 +27,15 @@ public class MainActivity extends FragmentActivity {
             }
 
             // Create an instance of ExampleFragment
-            FileListFragment firstFragment = new FileListFragment();
+            mFileListFragment = new FileListFragment();
             
             // In case this activity was started with special instructions from an Intent,
             // pass the Intent's extras to the fragment as arguments
-            firstFragment.setArguments(getIntent().getExtras());
+            mFileListFragment.setArguments(getIntent().getExtras());
             
             // Add the fragment to the 'fragment_container' FrameLayout
             getSupportFragmentManager().beginTransaction()
-                    .add(R.id.content, firstFragment).commit();
+                    .add(R.id.content, mFileListFragment).commit();
         }
 	}
 
@@ -44,6 +44,12 @@ public class MainActivity extends FragmentActivity {
 		// Inflate the menu; this adds items to the action bar if it is present.
 		getMenuInflater().inflate(R.menu.main, menu);
 		return true;
+	}
+	
+	@Override
+	public void onBackPressed() {
+		if(!mFileListFragment.back())
+			super.onBackPressed();
 	}
 
 }

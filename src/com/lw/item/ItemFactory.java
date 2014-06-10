@@ -3,30 +3,34 @@ package com.lw.item;
 import java.io.File;
 
 import com.example.filemanager.MediaFile;
+import com.example.filemanager.MediaFile.MediaFileType;
 
 import android.content.Context;
 
 public class ItemFactory {
 
 	
-	public static BaseItem createItem(Context context,String path){
-		File file = new File(path);
+	public static BaseItem createItem(Context context,File file){
 		BaseItem item = null;
+		String path = file.getPath();
 		if(file.isDirectory())
 			item = new DirectoryItem(context, path);
 		else {
-			int fileType = MediaFile.getFormatCode(path, null);
-			if(MediaFile.isAudioFileType(fileType))
+			MediaFileType fileType = MediaFile.getFileType(path);
+			if(fileType == null)
+				return new FileItem(context, path);
+			System.out.println(fileType.mimeType+"<<"+fileType.fileType+">>"+path);
+			if(MediaFile.isAudioFileType(fileType.fileType))
 				item = new AudioItem(context, path);
-			else if(MediaFile.isImageFileType(fileType))
+			else if(MediaFile.isImageFileType(fileType.fileType))
 				item = new ImageItem(context, path);
-			else if(MediaFile.isVideoFileType(fileType))
+			else if(MediaFile.isVideoFileType(fileType.fileType))
 				item = new VideoItem(context, path);
-			else if(fileType == MediaFile.FILE_TYPE_APK)
+			else if(fileType.fileType == MediaFile.FILE_TYPE_APK)
 				item = new ApkItem(context,path);
 			else 
 				item = new FileItem(context, path);
-			item.setMimeTypeCode(fileType);
+			item.setMimeTypeCode(fileType.fileType);
 		}
 		return item;
 	}

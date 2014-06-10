@@ -3,6 +3,8 @@ package com.lw.item;
 import java.io.File;
 
 import android.content.Context;
+import android.content.Intent;
+import android.net.Uri;
 import android.text.TextUtils;
 import android.text.format.Formatter;
 
@@ -42,7 +44,7 @@ public class FileItem extends BaseItem{
 	@Override
 	public int getMimeTypeCode() {
 		if(mimeTypeCode == 0)
-			mimeTypeCode = MediaFile.getFormatCode(path, mimeType);
+			mimeTypeCode = MediaFile.getFileTypeForMimeType(mimeType);
 		return mimeTypeCode;
 	}
 	
@@ -52,7 +54,13 @@ public class FileItem extends BaseItem{
 	}
 	
 	public void open(){
-		
+		try{
+			Intent intent = new Intent(Intent.ACTION_VIEW);
+			intent.setDataAndType(Uri.parse("file://"+path), getMimeType());
+			mContext.startActivity(intent);
+		}catch(Exception e){
+			
+		}
 	}
 
 	@Override

@@ -36,7 +36,7 @@ public  class BaseItem {
 		mContext = content;
 		this.path = path;
 		mResources = mContext.getResources();
-		name = path.substring(path.lastIndexOf("/"), path.length());
+		name = path.substring(path.lastIndexOf("/")+1, path.length());
 	}
 	
 	protected Drawable getdefaultDrawable(){
@@ -65,7 +65,7 @@ public  class BaseItem {
 	
 	public void setPath(String path){
 		this.path = path;
-		name = path.substring(path.lastIndexOf("/"), path.length());
+		name = path.substring(path.lastIndexOf("/")+1, path.length());
 	}
 	
 	public String getPath(){
